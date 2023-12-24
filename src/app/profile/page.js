@@ -10,6 +10,10 @@ export default function ProfilePage() {
   const { status } = session;
 
   const [userName, setUserName] = useState("");
+  const [phone,setPhone] = useState('')
+  const [stAddress,setStAddress] = useState('')
+  const [postalCode,setPostalCode] = useState('')
+  const [city,setCity] = useState('')
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -19,8 +23,6 @@ export default function ProfilePage() {
 
   const handleProfileInfoUpdate = async (e) => {
     e.preventDefault();
-
-    
 
     const savingPromise = new Promise(async (resolve, reject) => {
       const response = await fetch("/api/profile", {
@@ -32,14 +34,12 @@ export default function ProfilePage() {
       else reject();
     });
     await toast.promise(savingPromise, {
-       loading: "Saving...",
-       success: "Profile saved!",
-       error: "Error",
-     });
+      loading: "Saving...",
+      success: "Profile saved!",
+      error: "Error",
+    });
   };
 
- 
-  
   if (status === "loading") {
     return "Loading...";
   }
@@ -67,6 +67,32 @@ export default function ProfilePage() {
               value={session.data.user.email}
               disabled={true}
             />
+            <input
+              type="tel"
+              placeholder="Phone No."
+              value={phone}
+              onChange={(ev) => setPhone(ev.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Street Address"
+              value={stAddress}
+              onChange={(ev) => setStAddress(ev.target.value)}
+            />
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="City"
+                value={city}
+                onChange={(ev) => setCity(ev.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Postal code"
+                value={postalCode}
+                onChange={(ev) => setPostalCode(ev.target.value)}
+              />
+            </div>
             <button type="submit" className=" w-[30%] m-auto ">
               Save
             </button>
