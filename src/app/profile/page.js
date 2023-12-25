@@ -18,6 +18,14 @@ export default function ProfilePage() {
   useEffect(() => {
     if (status === "authenticated") {
       setUserName(session.data.user.name);
+      fetch('/api/profile').then(response => {
+        response.json().then(data => {
+          setPhone(data.phone);
+          setCity(data.city)
+          setStAddress(data.stAddress)
+          setPostalCode(data.postalCode)
+        })
+      })
     }
   }, [session, status]);
 
@@ -28,7 +36,7 @@ export default function ProfilePage() {
       const response = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: userName }),
+        body: JSON.stringify({ name: userName,stAddress,city,phone,postalCode }),
       });
       if (response.ok) resolve();
       else reject();
@@ -48,7 +56,6 @@ export default function ProfilePage() {
     return redirect("/login");
   }
 
-  const userImage = session.data.user.image;
 
   return (
     <section className="mt-8">
