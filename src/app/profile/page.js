@@ -2,8 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { redirect } from "next/dist/server/api-utils";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import UserTabs from "../../components/layout/UserTabs"
 
 export default function ProfilePage() {
   const session = useSession();
@@ -14,6 +16,8 @@ export default function ProfilePage() {
   const [stAddress,setStAddress] = useState('')
   const [postalCode,setPostalCode] = useState('')
   const [city,setCity] = useState('')
+  const [isAdmin,setIsAdmin] = useState(false)
+  const [profileFetched, setProfileFetched] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -24,6 +28,8 @@ export default function ProfilePage() {
           setCity(data.city)
           setStAddress(data.stAddress)
           setPostalCode(data.postalCode)
+          setIsAdmin(data.admin)
+          setProfileFetched(true)
         })
       })
     }
@@ -48,7 +54,7 @@ export default function ProfilePage() {
     });
   };
 
-  if (status === "loading") {
+  if (status === "loading" || !profileFetched) {
     return "Loading...";
   }
 
@@ -59,46 +65,59 @@ export default function ProfilePage() {
 
   return (
     <section className="mt-8">
-      <h1 className="text-center text-primary text-4xl mb-4">Profile</h1>
-      <div className="max-w-md mx-auto">
+    <UserTabs isAdmin={isAdmin}/>
+      <div className="max-w-md mx-auto mt-8">
         <div className="flex gap-2 items-center">
           <form className="grow" onSubmit={handleProfileInfoUpdate}>
+            <label>Name</label>
             <input
               type="text"
               placeholder="Name"
               value={userName}
               onChange={(ev) => setUserName(ev.target.value)}
             />
+            <label>Email</label>
             <input
               type="email"
               value={session.data.user.email}
+              placeholder="email"
               disabled={true}
             />
+            <label>Phone</label>
             <input
               type="tel"
               placeholder="Phone No."
               value={phone}
               onChange={(ev) => setPhone(ev.target.value)}
             />
+            <label>Street Address</label>
             <input
               type="text"
               placeholder="Street Address"
               value={stAddress}
               onChange={(ev) => setStAddress(ev.target.value)}
             />
+
             <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="City"
-                value={city}
-                onChange={(ev) => setCity(ev.target.value)}
-              />
+              <div>
+                <label>City</label>
+
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={city}
+                  onChange={(ev) => setCity(ev.target.value)}
+                />
+              </div>
+              <div>
+                <label>Postal Code</label>
               <input
                 type="text"
                 placeholder="Postal code"
                 value={postalCode}
                 onChange={(ev) => setPostalCode(ev.target.value)}
-              />
+                />
+                </div>
             </div>
             <button type="submit" className=" w-[30%] m-auto ">
               Save

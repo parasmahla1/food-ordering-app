@@ -10,7 +10,7 @@ const UserSchema = new Schema({
   stAddress: {type: String},
   city: {type: String},
   postalCode: {type: String},
-  
+  admin: {type: Boolean, default: false}, 
 },{timestamps: true});
 
 export const User = models?.User ||  model('User', UserSchema)
