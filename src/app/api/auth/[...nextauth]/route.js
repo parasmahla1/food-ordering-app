@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import NextAuth from "next-auth";
+import NextAuth, { getServerSession } from "next-auth";
 import clientPromise from "@/libs/MongoConnect"
 import { User } from "@/models/User";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,6 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import { userInfo } from "os";
 
 export const authOptions = {
   secret: process.env.SECRET,
@@ -42,7 +43,18 @@ export const authOptions = {
     }),
   ],
 };
-
+export async function isAdmin() {
+  const session = await getServerSession(authOptions)
+  const userEmail = session?.user?.email
+  if(!userEmail) {
+    return false
+  }
+  const user = await User.findOne({email: userEmail})
+  if(!userInfo) {
+    return false
+  }
+  return user.admin
+} 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
